@@ -1,11 +1,17 @@
+use std::iter::successors;
+
+
 fn fuel_required(mass: &usize) -> usize {
     (mass / 3).saturating_sub(2)
 }
 
 
 fn absolute_fuel_required(mass: &usize) -> usize {
-    let step = |m: &usize| (m / 3).checked_sub(2);
-    std::iter::successors(Some(*mass), step).skip(1).sum()
+    let summands = successors(Some(*mass), |m| {
+        (m / 3).checked_sub(2)
+    });
+
+    summands.skip(1).sum()
 }
 
 
