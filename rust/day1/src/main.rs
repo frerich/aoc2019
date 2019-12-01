@@ -5,12 +5,12 @@ fn refills(mass: &usize) -> impl Iterator<Item = usize> {
 }
 
 
-fn fuel_required(mass: &usize) -> usize {
+fn initial_fuel(mass: &usize) -> usize {
     refills(mass).next().unwrap()
 }
 
 
-fn absolute_fuel_required(mass: &usize) -> usize {
+fn total_fuel(mass: &usize) -> usize {
     refills(mass).sum()
 }
 
@@ -27,8 +27,8 @@ fn main() {
     let masses = parse(&input)
         .expect("Failed to parse masses from input file");
 
-    let part_one: usize = masses.iter().map(fuel_required).sum();
-    let part_two: usize = masses.iter().map(absolute_fuel_required).sum();
+    let part_one: usize = masses.iter().map(inital_fuel).sum();
+    let part_two: usize = masses.iter().map(total_fuel).sum();
 
     println!("Part One: {:?}", part_one);
     println!("Part Two: {:?}", part_two);
@@ -37,51 +37,51 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    mod fuel_required {
-        use super::super::fuel_required;
+    mod inital_fuel {
+        use super::super::inital_fuel;
 
         #[test]
         fn example_1() {
-            assert_eq!(fuel_required(12), 2);
+            assert_eq!(inital_fuel(12), 2);
         }
 
         #[test]
         fn example_2() {
-            assert_eq!(fuel_required(14), 2);
+            assert_eq!(inital_fuel(14), 2);
         }
 
         #[test]
         fn example_3() {
-            assert_eq!(fuel_required(1969), 654);
+            assert_eq!(inital_fuel(1969), 654);
         }
 
         #[test]
         fn example_4() {
-            assert_eq!(fuel_required(100756), 33583);
+            assert_eq!(inital_fuel(100756), 33583);
         }
 
         #[test]
         fn small_mass() {
-            assert_eq!(fuel_required(2), 0);
+            assert_eq!(inital_fuel(2), 0);
         }
     }
 
-    mod absolute_fuel_required {
-        use super::super::absolute_fuel_required;
+    mod total_fuel {
+        use super::super::total_fuel;
 
         #[test]
         fn example_1() {
-            assert_eq!(absolute_fuel_required(14), 2);
+            assert_eq!(total_fuel(14), 2);
         }
 
         #[test]
         fn example_2() {
-            assert_eq!(absolute_fuel_required(1969), 966);
+            assert_eq!(total_fuel(1969), 966);
         }
 
         #[test]
         fn example_3() {
-            assert_eq!(absolute_fuel_required(100756), 50346);
+            assert_eq!(total_fuel(100756), 50346);
         }
     }
 }
