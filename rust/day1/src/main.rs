@@ -1,19 +1,16 @@
-fn fuel_required(mass: u128) -> u128 {
-    let quot = mass / 3;
-    if quot > 2 {
-        quot - 2
-    } else {
-        0
-    }
+fn fuel_required(mass: &usize) -> usize {
+    (mass / 3).saturating_sub(2)
 }
 
-fn absolute_fuel_required(mass: u128) -> u128 {
-    if mass == 0 {
-        0
-    } else {
-        let fuel = fuel_required(mass);
-        fuel + absolute_fuel_required(fuel)
-    }
+
+fn absolute_fuel_required(mass: &usize) -> usize {
+    let step = |m: &usize| (m / 3).checked_sub(2);
+    std::iter::successors(Some(*mass), step).skip(1).sum()
+}
+
+
+fn parse(input: &str) -> Option<Vec<usize>> {
+    input.lines().map(|s| s.parse().ok()).collect()
 }
 
 
@@ -21,10 +18,11 @@ fn main() {
     let input = std::fs::read_to_string("input.txt")
         .expect("Something went wrong reading the file");
 
-    let masses = input.lines().map(|line| line.parse::<u128>().unwrap());
+    let masses = parse(&input)
+        .expect("Failed to parse masses from input file");
 
-    let part_one: u128 = masses.clone().map(fuel_required).sum();
-    let part_two: u128 = masses.map(absolute_fuel_required).sum();
+    let part_one: usize = masses.iter().map(fuel_required).sum();
+    let part_two: usize = masses.iter().map(absolute_fuel_required).sum();
 
     println!("Part One: {:?}", part_one);
     println!("Part Two: {:?}", part_two);
