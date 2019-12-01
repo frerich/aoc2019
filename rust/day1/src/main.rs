@@ -6,7 +6,7 @@ fn refills(mass: &usize) -> impl Iterator<Item = usize> {
 
 
 fn initial_fuel(mass: &usize) -> usize {
-    refills(mass).next().unwrap()
+    refills(mass).next().unwrap_or(0)
 }
 
 
@@ -27,7 +27,7 @@ fn main() {
     let masses = parse(&input)
         .expect("Failed to parse masses from input file");
 
-    let part_one: usize = masses.iter().map(inital_fuel).sum();
+    let part_one: usize = masses.iter().map(initial_fuel).sum();
     let part_two: usize = masses.iter().map(total_fuel).sum();
 
     println!("Part One: {:?}", part_one);
@@ -37,32 +37,32 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    mod inital_fuel {
-        use super::super::inital_fuel;
+    mod initial_fuel {
+        use super::super::initial_fuel;
 
         #[test]
         fn example_1() {
-            assert_eq!(inital_fuel(12), 2);
+            assert_eq!(initial_fuel(&12), 2);
         }
 
         #[test]
         fn example_2() {
-            assert_eq!(inital_fuel(14), 2);
+            assert_eq!(initial_fuel(&14), 2);
         }
 
         #[test]
         fn example_3() {
-            assert_eq!(inital_fuel(1969), 654);
+            assert_eq!(initial_fuel(&1969), 654);
         }
 
         #[test]
         fn example_4() {
-            assert_eq!(inital_fuel(100756), 33583);
+            assert_eq!(initial_fuel(&100756), 33583);
         }
 
         #[test]
         fn small_mass() {
-            assert_eq!(inital_fuel(2), 0);
+            assert_eq!(initial_fuel(&2), 0);
         }
     }
 
@@ -71,17 +71,17 @@ mod tests {
 
         #[test]
         fn example_1() {
-            assert_eq!(total_fuel(14), 2);
+            assert_eq!(total_fuel(&14), 2);
         }
 
         #[test]
         fn example_2() {
-            assert_eq!(total_fuel(1969), 966);
+            assert_eq!(total_fuel(&1969), 966);
         }
 
         #[test]
         fn example_3() {
-            assert_eq!(total_fuel(100756), 50346);
+            assert_eq!(total_fuel(&100756), 50346);
         }
     }
 }
