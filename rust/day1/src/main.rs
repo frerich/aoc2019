@@ -1,17 +1,17 @@
-use std::iter::successors;
+fn refills(mass: &usize) -> impl Iterator<Item = usize> {
+    std::iter::successors(Some(*mass), |mass| {
+        (mass / 3).checked_sub(2)
+    }).skip(1)
+}
 
 
 fn fuel_required(mass: &usize) -> usize {
-    (mass / 3).saturating_sub(2)
+    refills(mass).next().unwrap()
 }
 
 
 fn absolute_fuel_required(mass: &usize) -> usize {
-    let summands = successors(Some(*mass), |m| {
-        (m / 3).checked_sub(2)
-    });
-
-    summands.skip(1).sum()
+    refills(mass).sum()
 }
 
 
