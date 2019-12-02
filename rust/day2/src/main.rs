@@ -3,7 +3,8 @@ fn parse(input: &str) -> Option<Vec<usize>> {
 }
 
 
-fn run(mem: &mut Vec<usize>, noun: usize, verb: usize) {
+fn run(opcodes: &[usize], noun: usize, verb: usize) -> usize {
+    let mut mem = opcodes.to_vec();
     mem[1] = noun;
     mem[2] = verb;
 
@@ -32,22 +33,19 @@ fn run(mem: &mut Vec<usize>, noun: usize, verb: usize) {
             }
         }
     }
+    mem[0]
 }
 
 
 fn part_one(opcodes: &[usize]) -> usize {
-    let mut mem = opcodes.to_vec();
-    run(&mut mem, 12, 2);
-    mem[0]
+    run(opcodes, 12, 2)
 }
 
 
 fn part_two(opcodes: &[usize]) -> usize {
     for noun in 0..100 {
         for verb in 0..100 {
-            let mut mem = opcodes.to_vec();
-            run(&mut mem, noun, verb);
-            if mem[0] == 19690720 {
+            if run(opcodes, noun, verb) == 19690720 {
                 return 100 * noun + verb;
             }
         }
