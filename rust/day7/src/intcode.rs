@@ -87,9 +87,3 @@ pub fn step(mem: &mut [isize], ip: &mut usize, mut put: impl FnMut(isize), mut g
     }
     opcode
 }
-
-pub fn run(mem: &mut [isize], mut put: impl FnMut(isize), mut get: impl FnMut() -> isize) {
-    let mut ip = 0;
-    while step(mem, &mut ip, &mut put, &mut get) != 99 {
-    }
-}
