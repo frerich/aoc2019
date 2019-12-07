@@ -14,7 +14,7 @@ fn decode_arg(mem: &[isize], ip: &usize, idx: u32) -> isize {
 }
 
 
-pub fn step(mem: &mut [isize], ip: &mut usize, put: &mut impl FnMut(isize), get: &mut impl FnMut() -> isize) -> u8 {
+pub fn step(mem: &mut [isize], ip: &mut usize, mut put: impl FnMut(isize), mut get: impl FnMut() -> isize) -> u8 {
     let opcode = (mem[*ip] % 100) as u8;
     match opcode {
         1 => {
