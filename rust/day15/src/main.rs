@@ -72,29 +72,22 @@ fn visit(droid: &mut intcode::Process, map: &mut HashMap<(isize,isize), Status>,
 }
 
 
-fn explore(program: &[isize]) -> HashMap<(isize,isize), Status> {
+fn discover_map(program: &[isize]) -> HashMap<(isize,isize), Status> {
     let mut droid = intcode::Process::new(program);
+
     let mut map: HashMap<(isize, isize), Status> = HashMap::new();
     map.insert((0,0), Status::Free);
+
     visit(&mut droid, &mut map, (0,0));
+
     map
 }
 
 
-fn adjacent(pos: &(isize, isize)) -> [(isize,isize); 4] {
-    [
-        (pos.0, pos.1 - 1),
-        (pos.0, pos.1 + 1),
-        (pos.0 - 1, pos.1),
-        (pos.0 + 1, pos.1)
-    ]
-}
-
-
-fn part_one(map: &HashMap<(isize, isize), Status>) -> usize {
+fn bfs_explore(map: &HashMap<(isize, isize), Status>, start: (isize, isize)) -> impl Iterator<Item = Vec<(isize,isize)>> + '_ {
     let mut visited = HashSet::new();
 
-    std::iter::successors(Some(vec![(0,0)]), |positions| {
+    std::iter::successors(Some(vec![start]), move |positions| {
         let mut next_positions = Vec::new();
         for pos in positions {
             if visited.contains(pos) {
@@ -102,41 +95,44 @@ fn part_one(map: &HashMap<(isize, isize), Status>) -> usize {
             }
             visited.insert(pos.clone());
 
-            for next_pos in &adjacent(&pos) {
+            let adjacent = [
+                (pos.0, pos.1 - 1),
+                (pos.0, pos.1 + 1),
+                (pos.0 - 1, pos.1),
+                (pos.0 + 1, pos.1)
+            ];
+
+            for next_pos in &adjacent {
                 match map.get(&next_pos) {
-                    Some(Status::Free)   => next_positions.push(*next_pos),
-                    Some(Status::Oxygen) => return None,
-                    _                    => {}
+                    Some(Status::Free)
+                    | Some(Status::Oxygen) => next_positions.push(*next_pos),
+                    _                      => {}
                 }
             }
         }
-        Some(next_positions)
+
+        if next_positions.is_empty() {
+            None
+        } else {
+            Some(next_positions)
+        }
+    })
+}
+
+
+fn part_one(map: &HashMap<(isize, isize), Status>) -> usize {
+    bfs_explore(map, (0,0)).take_while(|positions| {
+        !positions.into_iter().any(|pos| map.get(&pos) == Some(&Status::Oxygen))
     }).count()
 }
 
 
-fn part_two(mut map: HashMap<(isize,isize), Status>) -> usize {
+fn part_two(map: &HashMap<(isize,isize), Status>) -> usize {
     let oxygen_pos = map.iter()
         .find(|(_,&status)| status == Status::Oxygen)
         .unwrap().0;
 
-    std::iter::successors(Some(vec![*oxygen_pos]), |positions| {
-        let mut next_positions = Vec::new();
-        for pos in positions {
-            for next_pos in &adjacent(&pos) {
-                if let Some(Status::Free) = map.get(next_pos) {
-                    next_positions.push(*next_pos);
-                    map.insert(*next_pos, Status::Oxygen);
-                }
-            }
-        }
-
-        if !next_positions.is_empty() {
-            Some(next_positions)
-        } else {
-            None
-        }
-    }).count() - 1
+    bfs_explore(map, *oxygen_pos).count()
 }
 
 
@@ -147,8 +143,8 @@ fn main() {
     let program = intcode::parse(input.trim_end())
         .expect("Failed to parse input file");
 
-    let map = explore(&program);
+    let map = discover_map(&program);
 
     println!("Part one: {}", part_one(&map));
-    println!("Part two: {}", part_two(map));
+    println!("Part two: {}", part_two(&map));
 }
