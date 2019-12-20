@@ -1,14 +1,10 @@
-extern crate permute;
-
+use intcode;
 use std::collections::VecDeque;
 use permute::permutations_of;
 
-mod intcode;
-
 
 struct Amplifier {
-    ip: usize,
-    mem: Vec<isize>,
+    process: intcode::Process,
     input: VecDeque<isize>
 }
 
@@ -16,8 +12,7 @@ struct Amplifier {
 impl Amplifier {
     fn new(phase_signal: isize, program: &[isize]) -> Amplifier {
         Amplifier {
-            ip: 0,
-            mem: program.to_vec(),
+            process: intcode::Process::new(program),
             input: vec![phase_signal].into_iter().collect()
         }
     }
@@ -29,9 +24,7 @@ impl Amplifier {
         let mut output = None;
         let input = &mut self.input;
         loop {
-            let opcode = intcode::step(
-                &mut self.mem,
-                &mut self.ip,
+            let opcode = self.process.step(
                 |val| output = Some(val),
                 || input.pop_front().expect("Missing input")
             );
@@ -100,7 +93,7 @@ fn main() {
     let input = std::fs::read_to_string("input.txt")
         .expect("Failed to read input.txt");
 
-    let program = intcode::parse(&input)
+    let program = intcode::parse(input.trim_end())
         .expect("Failed to parse input file");
 
     println!("Part one: {:?}", part_one(&program));
