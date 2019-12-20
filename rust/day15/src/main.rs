@@ -1,8 +1,6 @@
+use intcode;
 use std::collections::HashMap;
 use std::collections::HashSet;
-
-
-mod intcode;
 
 
 #[derive(Clone, Copy)]

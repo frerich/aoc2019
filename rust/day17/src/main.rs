@@ -1,7 +1,5 @@
+use intcode;
 use std::collections::HashSet;
-
-
-mod intcode;
 
 
 fn part_one(program: &[isize]) -> usize {

@@ -1,7 +1,5 @@
+use intcode;
 use std::cell::Cell;
-
-
-mod intcode;
 
 
 fn run_game(program: &[isize], mut update_score: impl FnMut(usize), mut print_tile: impl FnMut(u32, u32, char), poll_joystick: impl Fn() -> isize) {

@@ -1,8 +1,6 @@
+use intcode;
 use std::collections::HashMap;
 use std::cell::{Cell, RefCell};
-
-
-mod intcode;
 
 
 enum Direction {

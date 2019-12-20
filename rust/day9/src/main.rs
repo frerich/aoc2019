@@ -1,4 +1,4 @@
-mod intcode;
+use intcode;
 
 
 fn part_one(program: &[isize]) -> isize {

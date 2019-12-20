@@ -1,4 +1,4 @@
-mod intcode;
+use intcode;
 
 
 fn attracted_at(program: &[isize], x: usize, y: usize) -> bool {
